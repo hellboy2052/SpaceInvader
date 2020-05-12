@@ -2,6 +2,7 @@ package Invader;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -14,16 +15,20 @@ public class drawing extends JPanel {
 	private ArrayList<bullet> Bullets;
 	private ImageIcon player_img = new ImageIcon("assets/player.gif");
 	private ImageIcon invader_img = new ImageIcon("assets/invader.gif");
-	
-	public drawing() {
+	private ImageIcon bg_img = new ImageIcon("assets/background-black.png");
+	public drawing()  {
 		
 	}
 	@Override
 	public void paint(Graphics g) {
 		super.paintComponent(g);
-		g.clearRect(0, 0, 480, 480);
-    	g.setColor(Color.BLACK);
-    	g.fillRect(0, 0, 480, 480);
+		
+
+        g.drawImage(bg_img.getImage(), 0, 0, 480, 480, null);
+		
+//		g.clearRect(0, 0, 480, 480);
+//    	g.setColor(Color.BLACK);
+//    	g.fillRect(0, 0, 480, 480);
     	
     	
     	if(player != null) {

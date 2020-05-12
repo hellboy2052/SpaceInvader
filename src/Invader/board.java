@@ -57,13 +57,14 @@ public class board extends JFrame implements ActionListener,KeyListener {
 		JPanel panel = new JPanel();
 		panel.setBounds(56, 0, 480, 480);
 		panel.setLayout(new BorderLayout(0, 0));
+		
 		game = new drawing();
 		game.setLayout(null);
 		panel.add(game);
 		player = new player(20, 230, 430);
 		int x = 50;
 		int y = 20;
-		for(int i = 0; i < 18; i++) {
+		for(int i = 0; i < 1; i++) {
 			Enemies.add(new enemy(20, x, y, 2));
 			x += 50;
 			if(x == 350) {
@@ -107,15 +108,16 @@ public class board extends JFrame implements ActionListener,KeyListener {
 		game.setEnemy(Enemies);
 		game.setBullets(Bullets);
 		movePlayer(player);
-		moveEnemy();
+//		moveEnemy();
 //		EnemyShoot();
-
-	
+		
+		
 		
 		if(Bullets != null) {
 			for(int i = 0; i < Bullets.size(); i++) {
 				moveBullet(Bullets.get(i));
-				if(Bullets.get(i).getY()<0) {
+				Collide();
+				if(Bullets.get(i).getY()<20) {
 					Bullets.remove(i);
 				}else if(Bullets.get(i).getY() > 460) {
 					Bullets.remove(i);
@@ -126,33 +128,33 @@ public class board extends JFrame implements ActionListener,KeyListener {
 			
 		}
 		
-			if(Bullets != null) {
-				for(int i = 0; i < Bullets.size(); i++) {
-					if(Bullets.get(i).getBulletStatus().equalsIgnoreCase("player")) {
-						for(int i1 = 0; i1 < Enemies.size(); i1++) {
-							if(checkCollision(Bullets.get(i), Enemies.get(i1))) {
-								ExplosionClip.play();
-								score += 10;
-								lblScore.setText("Score: " + score);
-								Bullets.remove(i);
-								Enemies.remove(i1);
-								break;	
-					  		}
-						}
-					}
-				}	
-			}
-			if(Bullets != null) {
-				for(int i = 0; i < Bullets.size(); i++) {
-					if(Bullets.get(i).getBulletStatus().equalsIgnoreCase("enemy")) {
-						if(checkCollision(Bullets.get(i), player)) {
-							
-							timer.stop();
-							break;
-						}
-					}
-				}	
-			}
+//			if(Bullets != null) {
+//				for(int i = 0; i < Bullets.size(); i++) {
+//					if(Bullets.get(i).getBulletStatus().equalsIgnoreCase("player")) {
+//						for(int i1 = 0; i1 < Enemies.size(); i1++) {
+//							if(checkCollision(Bullets.get(i), Enemies.get(i1))) {
+//								ExplosionClip.play();
+//								score += 10;
+//								lblScore.setText("Score: " + score);
+//								Bullets.remove(i);
+//								Enemies.remove(i1);
+//								break;	
+//					  		}
+//						}
+//					}
+//				}	
+//			}
+//			if(Bullets != null) {
+//				for(int i = 0; i < Bullets.size(); i++) {
+//					if(Bullets.get(i).getBulletStatus().equalsIgnoreCase("enemy")) {
+//						if(checkCollision(Bullets.get(i), player)) {
+//							
+//							timer.stop();
+//							break;
+//						}
+//					}
+//				}	
+//			}
 			
 		
 		
@@ -240,7 +242,6 @@ public class board extends JFrame implements ActionListener,KeyListener {
 		bullet bullet = new bullet(5, 10, p.getX()+8, p.getY(), Color.YELLOW, "player");
 		bullet.setMoveUp(true);
 		Bullets.add(bullet);
-
 	}
 	
 	public void fireBullet(enemy e) {
@@ -272,7 +273,6 @@ public class board extends JFrame implements ActionListener,KeyListener {
 		}
 		
 		if(p.isMovedown()) {
-			System.out.println(player.getY());
 			if(player.getY() < 450) {
 				int i = 0;
 				while(i != playerSpeed) {
@@ -313,6 +313,19 @@ public class board extends JFrame implements ActionListener,KeyListener {
 			return false;
 		}
 	
+	}
+	
+	public void Collide() {
+		int offset_X = 0;
+		int offset_Y = 0;
+		int b1 = 0;
+		for(bullet b : Bullets) {
+			offset_X = b.getX() - Enemies.get(0).getX();
+			offset_Y = b.getY() - Enemies.get(0).getY();
+			b1 = b.getX();
+		}
+		System.out.println("x :" + offset_X + " y :" + offset_Y);
+		System.out.println("enemy x: " + Enemies.get(0).getX() + " bullet x: " + b1);
 	}
 
 	@Override
