@@ -32,7 +32,7 @@ public class board extends JFrame implements ActionListener,KeyListener {
 	private player player;
 	private ArrayList<enemy> Enemies = new ArrayList<enemy>();
 	private ArrayList<bullet> Bullets = new ArrayList<bullet>();
-	private int playerSpeed = 10;
+	private int playerSpeed = 20;
 	private int bulletSpeed = 20;
 	private Random random = new Random();
 	private URL laser;
@@ -60,7 +60,7 @@ public class board extends JFrame implements ActionListener,KeyListener {
 		game = new drawing();
 		game.setLayout(null);
 		panel.add(game);
-		player = new player(20, 240, 440);
+		player = new player(20, 230, 430);
 		int x = 50;
 		int y = 20;
 		for(int i = 0; i < 18; i++) {
@@ -108,7 +108,7 @@ public class board extends JFrame implements ActionListener,KeyListener {
 		game.setBullets(Bullets);
 		movePlayer(player);
 		moveEnemy();
-		EnemyShoot();
+//		EnemyShoot();
 
 	
 		
@@ -253,7 +253,7 @@ public class board extends JFrame implements ActionListener,KeyListener {
 	public void movePlayer(player p) {
 		if(p.isMoveleft()) {
 
-			if(player.getX() != 10) {
+			if(player.getX() > 10) {
 				int i = 0;
 				while(i != playerSpeed) {
 					player.setX(player.getX() - 1);
@@ -262,10 +262,31 @@ public class board extends JFrame implements ActionListener,KeyListener {
 			}
 		}
 		if(p.isMoveright()) {
-			if(player.getX() != 450) {
+			if(player.getX() < 450) {
 				int i = 0;
 				while(i != playerSpeed) {
 					player.setX(player.getX() + 1);
+					i += 1;
+				}
+			}
+		}
+		
+		if(p.isMovedown()) {
+			System.out.println(player.getY());
+			if(player.getY() < 450) {
+				int i = 0;
+				while(i != playerSpeed) {
+					player.setY(player.getY() + 1);
+					i += 1;
+				}
+			}
+		}
+		
+		if(p.isMoveup()) {
+			if(player.getY() > 10) {
+				int i = 0;
+				while(i != playerSpeed) {
+					player.setY(player.getY() - 1);
 					i += 1;
 				}
 			}
@@ -304,12 +325,23 @@ public class board extends JFrame implements ActionListener,KeyListener {
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
 		int key = e.getKeyCode();
-		if(key == KeyEvent.VK_LEFT) {
+		
+		if(key == KeyEvent.VK_A) {
 			player.setMoveleft(true);
 		}
-		if(key == KeyEvent.VK_RIGHT) {
+		
+		if(key == KeyEvent.VK_D) {
 			player.setMoveright(true);
 		}
+		
+		if(key == KeyEvent.VK_W) {
+			player.setMoveup(true);
+		}
+		
+		if(key == KeyEvent.VK_S) {
+			player.setMovedown(true);
+		}
+		
 		if(key == KeyEvent.VK_SPACE) {
 			fireBullet(player);
 		}
@@ -325,12 +357,20 @@ public class board extends JFrame implements ActionListener,KeyListener {
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
 		int key = e.getKeyCode();
-		if(key == KeyEvent.VK_LEFT) {
+		if(key == KeyEvent.VK_A) {
 			player.setMoveleft(false);
 		}
 		
-		if(key == KeyEvent.VK_RIGHT) {
+		if(key == KeyEvent.VK_D) {
 			player.setMoveright(false);
+		}
+		
+		if(key == KeyEvent.VK_W) {
+			player.setMoveup(false);
+		}
+		
+		if(key == KeyEvent.VK_S) {
+			player.setMovedown(false);
 		}
 	}
 	

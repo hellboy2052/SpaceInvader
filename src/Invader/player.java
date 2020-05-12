@@ -7,6 +7,8 @@ public class player {
 	int x,y;
 	boolean moveleft;
 	boolean moveright;
+	boolean moveup;
+	boolean movedown;
 	
 	public player(int size, int x, int y) {
 		super();
@@ -15,6 +17,8 @@ public class player {
 		this.y = y;
 		this.moveleft = false;
 		this.moveright = false;
+		this.movedown = false;
+		this.moveup = false;
 	}
 	protected int getSize() {
 		return size;
@@ -46,6 +50,19 @@ public class player {
 	protected void setMoveright(boolean moveright) {
 		this.moveright = moveright;
 	}
+	protected boolean isMoveup() {
+		return moveup;
+	}
+	protected void setMoveup(boolean moveup) {
+		this.moveup = moveup;
+	}
+	protected boolean isMovedown() {
+		return movedown;
+	}
+	protected void setMovedown(boolean movedown) {
+		this.movedown = movedown;
+	}
+	
 	
 	
 }
