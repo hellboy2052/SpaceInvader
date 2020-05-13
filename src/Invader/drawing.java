@@ -2,6 +2,7 @@ package Invader;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
@@ -13,43 +14,42 @@ public class drawing extends JPanel {
 	private player player;
 	private ArrayList<enemy> Enemy;
 	private ArrayList<bullet> Bullets;
-	private ImageIcon player_img = new ImageIcon("assets/player.gif");
-	private ImageIcon invader_img = new ImageIcon("assets/invader.gif");
 	private ImageIcon bg_img = new ImageIcon("assets/background-black.png");
 	public drawing()  {
 		
 	}
 	@Override
 	public void paint(Graphics g) {
+		Graphics2D g2d = (Graphics2D) g;
 		super.paintComponent(g);
 		
-
-        g.drawImage(bg_img.getImage(), 0, 0, 480, 480, null);
 		
+        g2d.drawImage(bg_img.getImage(), 0, 0, 480, 480, null);
+//		g2d.drawImage(img, x, y, width, height, observer)
 //		g.clearRect(0, 0, 480, 480);
 //    	g.setColor(Color.BLACK);
 //    	g.fillRect(0, 0, 480, 480);
     	
     	
     	if(player != null) {
-    		player_img.paintIcon(this, g, player.getX(), player.getY());
+    		g2d.drawImage(player.getPlayerimg(),player.getX(), player.getY(), player.getWidth(), player.getHeight(), null);
 //    		g.setColor(Color.blue);
 //    		g.fillRect(player.getX(), player.getY(), player.getSize(), player.getSize());
     	}
     	
 
 	    if(Enemy != null) {
-		    for(int i = 0; i < Enemy.size(); i++) {
+		    for(enemy e : Enemy) {
 //		    	g.setColor(Color.red);
 //		    	g.fillRect(Enemy.get(i).getX(), Enemy.get(i).getY(), Enemy.get(i).getSize(), Enemy.get(i).getSize());
-		   		invader_img.paintIcon(this, g, Enemy.get(i).getX(), Enemy.get(i).getY());
+		   		g2d.drawImage(e.getEnemyImg(), e.getX(),e.getY(),e.getWidth(),e.getHeight(), null);
 		   	}
 	    }
 	    
 	    if(Bullets != null) {
 	    	for(bullet b : Bullets) {
-	    		g.setColor(b.getBulletcolor());
-		    	g.fillRect(b.x, b.getY(), b.getWidth(), b.getHeight());
+	    		g2d.setColor(b.getBulletcolor());
+	    		g2d.fillRect(b.getX(), b.getY(), b.getWidth(), b.height);
 	    	}
 	    }
 

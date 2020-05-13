@@ -1,9 +1,19 @@
 package Invader;
 
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
 public class enemy {
-	int size;
+	int height, width;
+	Image enemyImg;
 	int x,y;
 	int enemySpeed;
 	boolean moveleft;
@@ -14,9 +24,10 @@ public class enemy {
 
 	
 	
-	public enemy(int size, int x, int y, int enemySpeed) {
+	public enemy(String filename, int x, int y, int enemySpeed) throws IOException {
 		super();
-		this.size = size;
+		getMassFromImage(filename);
+		this.enemyImg = new ImageIcon(filename).getImage();
 		this.x = x;
 		this.y = y;
 		this.enemySpeed = enemySpeed;
@@ -25,12 +36,7 @@ public class enemy {
 		this.bulletspawn = 0.05;
 		this.tick = 1;
 	}
-	protected int getSize() {
-		return size;
-	}
-	protected void setSize(int size) {
-		this.size = size;
-	}
+	
 	protected int getX() {
 		return x;
 	}
@@ -74,6 +80,43 @@ public class enemy {
 	}
 	protected void setTick(double tick) {
 		this.tick = tick;
+	}
+
+	protected int getHeight() {
+		return height;
+	}
+
+	protected void setHeight(int height) {
+		this.height = height;
+	}
+
+	protected int getWidth() {
+		return width;
+	}
+
+	protected void setWidth(int width) {
+		this.width = width;
+	}
+
+	protected Image getEnemyImg() {
+		return enemyImg;
+	}
+
+	protected void setEnemyImg(Image enemyImg) {
+		this.enemyImg = enemyImg;
+	}
+	
+	public void getMassFromImage(String filename) throws IOException {
+		URL fileurl = new File(filename).toURI().toURL();
+		BufferedImage Bi = ImageIO.read(fileurl.openStream());
+		
+		this.width = Bi.getWidth();
+		this.height = Bi.getHeight();
+		
+	}
+	
+	public Rectangle getBound() {
+		return new Rectangle(this.x, this.y, this.width, this.height);
 	}
 
 	

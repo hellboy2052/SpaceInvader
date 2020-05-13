@@ -1,6 +1,7 @@
 package Invader;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 
 public class bullet {
 
@@ -91,6 +92,10 @@ public class bullet {
 
 	protected void setBulletStatus(String bulletStatus) {
 		this.bulletStatus = bulletStatus;
+	}
+	
+	public Rectangle getBound() {
+		return new Rectangle(this.x, this.y, this.width, this.height);
 	}
 	
 	
