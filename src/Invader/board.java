@@ -28,7 +28,8 @@ public class board extends JFrame implements ActionListener,KeyListener {
 	public Timer timer;
 	private JPanel contentPane;
 	private JLabel lblScore;
-	private int score = 0;
+	private JLabel lblLv;
+	private int score = 0, level = 1, wave_length = 5, currentwave = 0;
 	private drawing game;
 	private player player;
 	private ArrayList<enemy> Enemies = new ArrayList<enemy>();
@@ -46,7 +47,7 @@ public class board extends JFrame implements ActionListener,KeyListener {
 	
 	public board() throws IOException {
 		addKeyListener(this);
-		timer = new Timer(80, this);
+		timer = new Timer(50, this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 		setBounds(0, 0, 600, 600);
@@ -65,14 +66,7 @@ public class board extends JFrame implements ActionListener,KeyListener {
 		player = new player("assets/player.gif", 230, 430);
 		int x = 50;
 		int y = 20;
-		for(int i = 0; i < 18; i++) {
-			Enemies.add(new enemy("assets/invader.gif", x, y, 2));
-			x += 50;
-			if(x == 350) {
-				x = 50;
-				y+= 40;
-			}
-		}
+		
 		
 		laser = new File("assets/laser.wav").toURI().toURL();
 		laserClip = java.applet.Applet.newAudioClip(laser);
@@ -83,7 +77,14 @@ public class board extends JFrame implements ActionListener,KeyListener {
 		lblScore.setFont(new Font("Times New Roman", Font.PLAIN, 14));
 		lblScore.setHorizontalAlignment(SwingConstants.CENTER);
 		lblScore.setBounds(10, 491, 67, 31);
+		
+		lblLv = new JLabel("Level: " + level);
+		lblLv.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		lblLv.setHorizontalAlignment(SwingConstants.CENTER);
+		lblLv.setBounds(10, 520, 67, 31);
+		
 		contentPane.add(lblScore);
+		contentPane.add(lblLv);
 		
 		contentPane.add(panel);
 		setLocationRelativeTo(null);
@@ -105,6 +106,16 @@ public class board extends JFrame implements ActionListener,KeyListener {
 	}
 	
 	public void process() {
+		if(currentwave != wave_length) {
+			try {
+				SpawnEnemy(wave_length);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		updateLvl();
 		game.setPlayer(player);
 		game.setEnemy(Enemies);
 		game.setBullets(Bullets);
@@ -112,6 +123,9 @@ public class board extends JFrame implements ActionListener,KeyListener {
 		moveEnemy();
 		EnemyShoot();
 		
+		if(player.checkHealth()) {
+			timer.stop();
+		}
 		
 		if(Bullets != null) {
 			for(int i = 0; i < Bullets.size(); i++) {
@@ -148,11 +162,22 @@ public class board extends JFrame implements ActionListener,KeyListener {
 				for(int i = 0; i < Bullets.size(); i++) {
 					if(Bullets.get(i).getBulletStatus().equalsIgnoreCase("enemy")) {
 						if(checkCollision(Bullets.get(i).getBound(), player.getBound())) {
-							timer.stop();
+							ExplosionClip.play();
+							Bullets.remove(i);
+							player.health-= 20;
 							break;
 						}
 					}
 				}	
+			}
+			
+			for(int i = 0; i < Enemies.size(); i++) {
+				if(checkCollision(player.getBound(), Enemies.get(i).getBound())) {
+					ExplosionClip.play();
+					Enemies.remove(i);
+					player.health-= 20;
+					break;
+				}
 			}
 			
 		
@@ -182,36 +207,62 @@ public class board extends JFrame implements ActionListener,KeyListener {
 	}
 	
 	public void moveEnemy() {
+		
 		for(enemy e : Enemies) {
-			if(e.isMoveleft()) {
-				e.setX(e.getX()-e.getEnemySpeed());
-			}
-			
-			if(e.isMoveright()) {
-				e.setX(e.getX()+e.getEnemySpeed());
-				
-			}
-			
-		}
-		for(enemy e : Enemies) {
-			if(e.getX() > 450) {
-				for(int i = 0; i < Enemies.size(); i++) {
-					Enemies.get(i).setMoveleft(true);
-					Enemies.get(i).setMoveright(false);
-				}
-			}
-			
-			if(e.getX() < 5) {
-				for(int i = 0; i < Enemies.size(); i++) {
-					Enemies.get(i).setMoveright(true);
-					Enemies.get(i).setMoveleft(false);
-				}
+			e.setY(e.y + e.enemySpeed);
+			if(e.y > 460) {
+				e.x = getRandomIntegerBetweenRange(20, 400);
+				e.y = getRandomIntegerBetweenRange(-20, -100);
 			}
 		}
+		
+		
+//		for(enemy e : Enemies) {
+//			if(e.isMoveleft()) {
+//				e.setX(e.getX()-e.getEnemySpeed());
+//			}
+//			
+//			if(e.isMoveright()) {
+//				e.setX(e.getX()+e.getEnemySpeed());
+//				
+//			}
+//			
+//		}
+//		for(enemy e : Enemies) {
+//			if(e.getX() > 450) {
+//				for(int i = 0; i < Enemies.size(); i++) {
+//					Enemies.get(i).setMoveleft(true);
+//					Enemies.get(i).setMoveright(false);
+//				}
+//			}
+//			
+//			if(e.getX() < 5) {
+//				for(int i = 0; i < Enemies.size(); i++) {
+//					Enemies.get(i).setMoveright(true);
+//					Enemies.get(i).setMoveleft(false);
+//				}
+//			}
+//		}
 		
 			
 
 	
+	}
+	
+	public void updateLvl() {
+		if(Enemies.size() == 0) {
+			level += 1;
+			currentwave = 0;
+			wave_length += 5;
+			lblLv.setText("Level: " + level);
+		}
+	}
+	
+	public void SpawnEnemy(int length) throws IOException {
+		for(int i = 0; i < length; i++) {
+			Enemies.add(new enemy("assets/invader.gif", getRandomIntegerBetweenRange(20, 420), getRandomIntegerBetweenRange(-20, -100), 2));
+			currentwave += 1;
+		}
 	}
 	
 	
@@ -272,7 +323,7 @@ public class board extends JFrame implements ActionListener,KeyListener {
 		}
 		
 		if(p.isMovedown()) {
-			if(player.getY() < 450) {
+			if(player.getY() < 430) {
 				int i = 0;
 				while(i != playerSpeed) {
 					player.setY(player.getY() + 1);

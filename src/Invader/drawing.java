@@ -33,6 +33,10 @@ public class drawing extends JPanel {
     	
     	if(player != null) {
     		g2d.drawImage(player.getPlayerimg(),player.getX(), player.getY(), player.getWidth(), player.getHeight(), null);
+    		g2d.setColor(Color.RED);
+    		g2d.fillRect(player.getX() - 4, player.getY()+28, 35, 5);
+    		g2d.setColor(Color.GREEN);
+    		g2d.fillRect(player.getX() - 4, player.getY()+28, player.giveWidthByHealth(35), 5);
 //    		g.setColor(Color.blue);
 //    		g.fillRect(player.getX(), player.getY(), player.getSize(), player.getSize());
     	}

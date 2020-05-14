@@ -33,7 +33,7 @@ public class enemy {
 		this.enemySpeed = enemySpeed;
 		this.moveleft = false;
 		this.moveright = true;
-		this.bulletspawn = 0.05;
+		this.bulletspawn = 0.09;
 		this.tick = 1;
 	}
 	

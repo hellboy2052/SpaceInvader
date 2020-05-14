@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -19,7 +18,8 @@ public class player {
 	boolean moveright;
 	boolean moveup;
 	boolean movedown;
-	
+	double health;
+	double max_health;
 	
 	public player(String filename, int x, int y) throws IOException {
 		super();
@@ -31,6 +31,8 @@ public class player {
 		this.moveright = false;
 		this.movedown = false;
 		this.moveup = false;
+		this.health = 100;
+		this.max_health = this.health;
 	}
 	protected int getX() {
 		return x;
@@ -87,6 +89,21 @@ public class player {
 	protected void setPlayerimg(Image playerimg) {
 		this.playerimg = playerimg;
 	}
+	
+	
+	protected double getHealth() {
+		return health;
+	}
+	protected void setHealth(double health) {
+		this.health = health;
+	}
+	protected double getMax_health() {
+		return max_health;
+	}
+	protected void setMax_health(double max_health) {
+		this.max_health = max_health;
+	}
+	
 	public void getMassFromImage(String filename) throws IOException {
 		URL fileurl = new File(filename).toURI().toURL();
 		BufferedImage Bi = ImageIO.read(fileurl.openStream());
@@ -98,6 +115,18 @@ public class player {
 	
 	public Rectangle getBound() {
 		return new Rectangle(this.x, this.y, this.width, this.height);
+	}
+	
+	public int giveWidthByHealth(int width) {
+		return (int) (width * (this.health/this.max_health));
+	}
+	
+	public boolean checkHealth() {
+		if(this.health == 0) {
+			return true;
+		}else {
+			return false;
+		}
 	}
 	
 	
