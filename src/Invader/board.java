@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -21,14 +23,17 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JButton;
 
 
 
-public class board extends JFrame implements ActionListener,KeyListener {
+public class board extends JFrame implements ActionListener,KeyListener, MouseListener {
 	public Timer timer;
 	private JPanel contentPane;
+	private JButton btnStart;
 	private JLabel lblScore;
 	private JLabel lblLv;
+	private JPanel panel;
 	private int score = 0, level = 1, wave_length = 5, currentwave = 0;
 	private drawing game;
 	private player player;
@@ -39,6 +44,7 @@ public class board extends JFrame implements ActionListener,KeyListener {
 	private Random random = new Random();
 	private URL laser;
 	private URL explosion;
+	private String action;
 	private java.applet.AudioClip laserClip;
 	private java.applet.AudioClip ExplosionClip;
 	private Boolean left = false, right = false;
@@ -46,6 +52,7 @@ public class board extends JFrame implements ActionListener,KeyListener {
 	
 	
 	public board() throws IOException {
+		addMouseListener(this);
 		addKeyListener(this);
 		timer = new Timer(50, this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -56,7 +63,7 @@ public class board extends JFrame implements ActionListener,KeyListener {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JPanel panel = new JPanel();
+		panel = new JPanel();
 		panel.setBounds(56, 0, 480, 480);
 		panel.setLayout(new BorderLayout(0, 0));
 		
@@ -81,15 +88,21 @@ public class board extends JFrame implements ActionListener,KeyListener {
 		lblLv = new JLabel("Level: " + level);
 		lblLv.setFont(new Font("Times New Roman", Font.PLAIN, 14));
 		lblLv.setHorizontalAlignment(SwingConstants.CENTER);
-		lblLv.setBounds(10, 520, 67, 31);
+		lblLv.setBounds(10, 529, 67, 31);
 		
 		contentPane.add(lblScore);
 		contentPane.add(lblLv);
 		
 		contentPane.add(panel);
+		
+		btnStart = new JButton("Start");
+		btnStart.addActionListener(this);
+		btnStart.setFont(new Font("Tahoma", Font.BOLD, 14));
+		btnStart.setBounds(240, 510, 89, 23);
+		contentPane.add(btnStart);
 		setLocationRelativeTo(null);
 		setVisible(true);
-		timer.start();
+		SpawnEnemy(wave_length);
 
 	}
 	
@@ -100,20 +113,30 @@ public class board extends JFrame implements ActionListener,KeyListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-
-		process();
-		repaint();
+		
+		if(e.getActionCommand() != null) {
+			if(e.getActionCommand().equalsIgnoreCase("start")) {
+				requestFocusInWindow();
+				btnStart.setVisible(false);
+				timer.start();
+			}if(e.getActionCommand().equalsIgnoreCase("restart")) {
+				try {
+					Reset();
+					btnStart.setVisible(false);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			
+		}
+		if(timer.isRunning()) {
+			process();
+			repaint();
+		}
 	}
 	
 	public void process() {
-		if(currentwave != wave_length) {
-			try {
-				SpawnEnemy(wave_length);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 		
 		updateLvl();
 		game.setPlayer(player);
@@ -123,9 +146,6 @@ public class board extends JFrame implements ActionListener,KeyListener {
 		moveEnemy();
 		EnemyShoot();
 		
-		if(player.checkHealth()) {
-			timer.stop();
-		}
 		
 		if(Bullets != null) {
 			for(int i = 0; i < Bullets.size(); i++) {
@@ -176,8 +196,17 @@ public class board extends JFrame implements ActionListener,KeyListener {
 					ExplosionClip.play();
 					Enemies.remove(i);
 					player.health-= 20;
+					score += 10;
+					lblScore.setText("Score: " + score);
 					break;
 				}
+			}
+			
+			if(player.checkHealth()) {
+				btnStart.setVisible(true);
+				btnStart.setText("Restart");
+				btnStart.requestFocus();
+				timer.stop();
 			}
 			
 		
@@ -186,8 +215,21 @@ public class board extends JFrame implements ActionListener,KeyListener {
 		
 		
 		
-		
-		
+	}
+	
+	public void Reset() throws IOException {
+		score = 0;
+		level = 0;
+		wave_length = 5;
+		currentwave = 0;
+		player = new player("assets/player.gif", 230, 430);
+		Enemies.removeAll(Enemies);
+		Bullets.removeAll(Bullets);
+		lblScore.setText("Score: 0" );
+		lblLv.setText("Level: 0");
+		SpawnEnemy(wave_length);
+		requestFocusInWindow();
+		timer.start();
 	}
 	public void EnemyShoot() {
 		for(enemy e : Enemies) {
@@ -215,46 +257,19 @@ public class board extends JFrame implements ActionListener,KeyListener {
 				e.y = getRandomIntegerBetweenRange(-20, -100);
 			}
 		}
-		
-		
-//		for(enemy e : Enemies) {
-//			if(e.isMoveleft()) {
-//				e.setX(e.getX()-e.getEnemySpeed());
-//			}
-//			
-//			if(e.isMoveright()) {
-//				e.setX(e.getX()+e.getEnemySpeed());
-//				
-//			}
-//			
-//		}
-//		for(enemy e : Enemies) {
-//			if(e.getX() > 450) {
-//				for(int i = 0; i < Enemies.size(); i++) {
-//					Enemies.get(i).setMoveleft(true);
-//					Enemies.get(i).setMoveright(false);
-//				}
-//			}
-//			
-//			if(e.getX() < 5) {
-//				for(int i = 0; i < Enemies.size(); i++) {
-//					Enemies.get(i).setMoveright(true);
-//					Enemies.get(i).setMoveleft(false);
-//				}
-//			}
-//		}
-		
-			
-
-	
 	}
 	
 	public void updateLvl() {
 		if(Enemies.size() == 0) {
 			level += 1;
-			currentwave = 0;
 			wave_length += 5;
 			lblLv.setText("Level: " + level);
+			try {
+				SpawnEnemy(wave_length);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -454,4 +469,33 @@ public class board extends JFrame implements ActionListener,KeyListener {
 	    return (int) ((Math.random()*((max-min)+1))+min);
 	}
 
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+//		e.getComponent().requestFocusInWindow();
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 }
