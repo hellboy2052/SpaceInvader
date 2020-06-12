@@ -21,14 +21,10 @@ public class drawing extends JPanel {
 	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		super.paintComponent(g);
+		super.paintComponents(g);
 		
 		
         g2d.drawImage(bg_img.getImage(), 0, 0, 480, 480, null);
-//		g2d.drawImage(img, x, y, width, height, observer)
-//		g.clearRect(0, 0, 480, 480);
-//    	g.setColor(Color.BLACK);
-//    	g.fillRect(0, 0, 480, 480);
     	
     	
     	if(player != null) {

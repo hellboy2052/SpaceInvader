@@ -5,7 +5,8 @@ import java.awt.Rectangle;
 
 public class bullet {
 
-	int width,height ,x ,y,bulletSpeed;
+	int width,height ,x ,y;
+	public int bulletSpeed;
 	Color bulletcolor;
 	boolean moveUp, moveDown;
 	String bulletStatus;	
@@ -38,7 +39,7 @@ public class bullet {
 		this.height = height;
 	}
 
-	protected int getX() {
+	public int getX() {
 		return x;
 	}
 
@@ -46,7 +47,7 @@ public class bullet {
 		this.x = x;
 	}
 
-	protected int getY() {
+	public int getY() {
 		return y;
 	}
 
@@ -66,7 +67,7 @@ public class bullet {
 		return moveUp;
 	}
 
-	protected void setMoveUp(boolean moveUp) {
+	public void setMoveUp(boolean moveUp) {
 		this.moveUp = moveUp;
 	}
 
@@ -74,7 +75,7 @@ public class bullet {
 		return moveDown;
 	}
 
-	protected void setMoveDown(boolean moveDown) {
+	public void setMoveDown(boolean moveDown) {
 		this.moveDown = moveDown;
 	}
 
@@ -98,7 +99,35 @@ public class bullet {
 		return new Rectangle(this.x, this.y, this.width, this.height);
 	}
 	
-	
+	public void move() {
+		if(isMoveUp()) {
+			int i = 0;
+			while(i != bulletSpeed) {
+				setY(getY() - 1);
+				i += 1;
+			}
+			
+		}
+		
+		if(isMoveDown()) {
+			int i = 0;
+			while(i != bulletSpeed) {
+				setY(getY() + 1);
+				i += 1;
+			}
+			
+		}
+	}
+	public boolean checkCollision(Rectangle ro) {
+        Rectangle r1 = getBound();
+        Rectangle r2 = ro;
+        if (r1.intersects(r2)){
+        	return true;
+        }else {
+        	return false;
+        }
+               
+}
 	
 	
 	

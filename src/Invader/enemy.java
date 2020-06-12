@@ -15,7 +15,7 @@ public class enemy {
 	int height, width;
 	Image enemyImg;
 	int x,y;
-	int enemySpeed;
+	public int enemySpeed;
 	boolean moveleft;
 	boolean moveright;
 	double bulletspawn;
@@ -24,26 +24,28 @@ public class enemy {
 
 	
 	
-	public enemy(String filename, int x, int y, int enemySpeed) throws IOException {
+	public enemy( int x, int y) throws IOException {
 		super();
-		getMassFromImage(filename);
-		this.enemyImg = new ImageIcon(filename).getImage();
+		
+		getMassFromImage("assets/invader.gif");
+		this.enemyImg = new ImageIcon("assets/invader.gif").getImage();
 		this.x = x;
 		this.y = y;
-		this.enemySpeed = enemySpeed;
+		this.enemySpeed = 2;
 		this.moveleft = false;
 		this.moveright = true;
 		this.bulletspawn = 0.09;
 		this.tick = 1;
 	}
 	
-	protected int getX() {
+	public int getX() {
+		
 		return x;
 	}
 	protected void setX(int x) {
 		this.x = x;
 	}
-	protected int getY() {
+	public int getY() {
 		return y;
 	}
 	protected void setY(int y) {
@@ -119,7 +121,20 @@ public class enemy {
 		return new Rectangle(this.x, this.y, this.width, this.height);
 	}
 
+	public void move() {
+		setY(y + enemySpeed);
+	}
 	
+	public boolean checkCollision(Rectangle rb) {
+        Rectangle r1 = getBound();
+        Rectangle r2 = rb;
+        if (r1.intersects(r2)){
+        	return true;
+        }else {
+        	return false;
+        }
+               
+}
 	
 	
 }

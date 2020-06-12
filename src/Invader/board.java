@@ -70,9 +70,7 @@ public class board extends JFrame implements ActionListener,KeyListener, MouseLi
 		game = new drawing();
 		game.setLayout(null);
 		panel.add(game);
-		player = new player("assets/player.gif", 230, 430);
-		int x = 50;
-		int y = 20;
+		player = new player(230, 430);
 		
 		
 		laser = new File("assets/laser.wav").toURI().toURL();
@@ -142,14 +140,14 @@ public class board extends JFrame implements ActionListener,KeyListener, MouseLi
 		game.setPlayer(player);
 		game.setEnemy(Enemies);
 		game.setBullets(Bullets);
-		movePlayer(player);
+		player.move();
 		moveEnemy();
 		EnemyShoot();
 		
 		
 		if(Bullets != null) {
 			for(int i = 0; i < Bullets.size(); i++) {
-				moveBullet(Bullets.get(i));
+				Bullets.get(i).move();
 				
 				if(Bullets.get(i).getY()<20) {
 					Bullets.remove(i);
@@ -166,7 +164,7 @@ public class board extends JFrame implements ActionListener,KeyListener, MouseLi
 				for(int i = 0; i < Bullets.size(); i++) {
 					if(Bullets.get(i).getBulletStatus().equalsIgnoreCase("player")) {
 						for(int i1 = 0; i1 < Enemies.size(); i1++) {
-							if(checkCollision(Bullets.get(i).getBound(), Enemies.get(i1).getBound())) {
+							if(Bullets.get(i).checkCollision(Enemies.get(i1).getBound())) {
 								ExplosionClip.play();
 								score += 10;
 								lblScore.setText("Score: " + score);
@@ -181,10 +179,11 @@ public class board extends JFrame implements ActionListener,KeyListener, MouseLi
 			if(Bullets != null) {
 				for(int i = 0; i < Bullets.size(); i++) {
 					if(Bullets.get(i).getBulletStatus().equalsIgnoreCase("enemy")) {
-						if(checkCollision(Bullets.get(i).getBound(), player.getBound())) {
+						if(Bullets.get(i).checkCollision(player.getBound())) {
 							ExplosionClip.play();
 							Bullets.remove(i);
 							player.health-= 20;
+							
 							break;
 						}
 					}
@@ -192,7 +191,9 @@ public class board extends JFrame implements ActionListener,KeyListener, MouseLi
 			}
 			
 			for(int i = 0; i < Enemies.size(); i++) {
-				if(checkCollision(player.getBound(), Enemies.get(i).getBound())) {
+				if(Enemies.get(i).checkCollision(player.getBound())) {
+					System.out.println("player y: " + player.getY() + " player x: " + player.getX());
+					System.out.println("enemy y: " + Enemies.get(i).getY() + " enemy x: " + Enemies.get(i).getX());
 					ExplosionClip.play();
 					Enemies.remove(i);
 					player.health-= 20;
@@ -222,7 +223,7 @@ public class board extends JFrame implements ActionListener,KeyListener, MouseLi
 		level = 0;
 		wave_length = 5;
 		currentwave = 0;
-		player = new player("assets/player.gif", 230, 430);
+		player = new player(230, 430);
 		Enemies.removeAll(Enemies);
 		Bullets.removeAll(Bullets);
 		lblScore.setText("Score: 0" );
@@ -251,7 +252,7 @@ public class board extends JFrame implements ActionListener,KeyListener, MouseLi
 	public void moveEnemy() {
 		
 		for(enemy e : Enemies) {
-			e.setY(e.y + e.enemySpeed);
+			e.move();
 			if(e.y > 460) {
 				e.x = getRandomIntegerBetweenRange(20, 400);
 				e.y = getRandomIntegerBetweenRange(-20, -100);
@@ -275,32 +276,11 @@ public class board extends JFrame implements ActionListener,KeyListener, MouseLi
 	
 	public void SpawnEnemy(int length) throws IOException {
 		for(int i = 0; i < length; i++) {
-			Enemies.add(new enemy("assets/invader.gif", getRandomIntegerBetweenRange(20, 420), getRandomIntegerBetweenRange(-20, -100), 2));
+			Enemies.add(new enemy(getRandomIntegerBetweenRange(20, 420), getRandomIntegerBetweenRange(-20, -100)));
 			currentwave += 1;
 		}
 	}
 	
-	
-	public void moveBullet(bullet b) {
-			if(b.isMoveUp()) {
-				int i = 0;
-				while(i != b.bulletSpeed) {
-					b.setY(b.getY() - 1);
-					i += 1;
-				}
-				
-			}
-			
-			if(b.isMoveDown()) {
-				int i = 0;
-				while(i != b.bulletSpeed) {
-					b.setY(b.getY() + 1);
-					i += 1;
-				}
-				
-			}
-		
-	}
 	
 	public void fireBullet(player p) {	
 		laserClip.play();
@@ -316,47 +296,47 @@ public class board extends JFrame implements ActionListener,KeyListener, MouseLi
 
 	}
 	
-	public void movePlayer(player p) {
-		if(p.isMoveleft()) {
-
-			if(player.getX() > 10) {
-				int i = 0;
-				while(i != playerSpeed) {
-					player.setX(player.getX() - 1);
-					i += 1;
-				}
-			}
-		}
-		if(p.isMoveright()) {
-			if(player.getX() < 450) {
-				int i = 0;
-				while(i != playerSpeed) {
-					player.setX(player.getX() + 1);
-					i += 1;
-				}
-			}
-		}
-		
-		if(p.isMovedown()) {
-			if(player.getY() < 430) {
-				int i = 0;
-				while(i != playerSpeed) {
-					player.setY(player.getY() + 1);
-					i += 1;
-				}
-			}
-		}
-		
-		if(p.isMoveup()) {
-			if(player.getY() > 10) {
-				int i = 0;
-				while(i != playerSpeed) {
-					player.setY(player.getY() - 1);
-					i += 1;
-				}
-			}
-		}
-	}
+//	public void movePlayer(player p) {
+//		if(p.isMoveleft()) {
+//
+//			if(player.getX() > 10) {
+//				int i = 0;
+//				while(i != playerSpeed) {
+//					player.setX(player.getX() - 1);
+//					i += 1;
+//				}
+//			}
+//		}
+//		if(p.isMoveright()) {
+//			if(player.getX() < 450) {
+//				int i = 0;
+//				while(i != playerSpeed) {
+//					player.setX(player.getX() + 1);
+//					i += 1;
+//				}
+//			}
+//		}
+//		
+//		if(p.isMovedown()) {
+//			if(player.getY() < 430) {
+//				int i = 0;
+//				while(i != playerSpeed) {
+//					player.setY(player.getY() + 1);
+//					i += 1;
+//				}
+//			}
+//		}
+//		
+//		if(p.isMoveup()) {
+//			if(player.getY() > 10) {
+//				int i = 0;
+//				while(i != playerSpeed) {
+//					player.setY(player.getY() - 1);
+//					i += 1;
+//				}
+//			}
+//		}
+//	}
 	
 //	public boolean checkCollision(bullet Bullet, enemy e) {
 //		int distance = (int) Math.sqrt( Math.pow(Bullet.getX() - e.getX(),2) + Math.pow( Bullet.getY() - e.getY(),2));
@@ -405,6 +385,8 @@ public class board extends JFrame implements ActionListener,KeyListener, MouseLi
 ////			System.out.println("enemy x: " + Enemies.get(0).getX() + " bullet x: " + b1);
 ////		}
 //	}
+	
+	
 
 	@Override
 	public void keyTyped(KeyEvent e) {

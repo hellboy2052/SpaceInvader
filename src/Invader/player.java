@@ -14,6 +14,7 @@ public class player {
 	int height, width;
 	Image playerimg;
 	int x,y;
+	public int playerSpeed;
 	boolean moveleft;
 	boolean moveright;
 	boolean moveup;
@@ -21,26 +22,27 @@ public class player {
 	double health;
 	double max_health;
 	
-	public player(String filename, int x, int y) throws IOException {
+	public player(int x, int y) throws IOException {
 		super();
 		this.x = x;
 		this.y = y;
-		getMassFromImage(filename);
-		this.playerimg = new ImageIcon(filename).getImage();
+		getMassFromImage("assets/player.gif");
+		this.playerimg = new ImageIcon("assets/player.gif").getImage();
 		this.moveleft = false;
 		this.moveright = false;
 		this.movedown = false;
 		this.moveup = false;
 		this.health = 100;
 		this.max_health = this.health;
+		this.playerSpeed = 20;
 	}
-	protected int getX() {
+	public int getX() {
 		return x;
 	}
 	protected void setX(int x) {
 		this.x = x;
 	}
-	protected int getY() {
+	public int getY() {
 		return y;
 	}
 	protected void setY(int y) {
@@ -49,25 +51,25 @@ public class player {
 	protected boolean isMoveleft() {
 		return moveleft;
 	}
-	protected void setMoveleft(boolean moveleft) {
+	public void setMoveleft(boolean moveleft) {
 		this.moveleft = moveleft;
 	}
 	protected boolean isMoveright() {
 		return moveright;
 	}
-	protected void setMoveright(boolean moveright) {
+	public void setMoveright(boolean moveright) {
 		this.moveright = moveright;
 	}
 	protected boolean isMoveup() {
 		return moveup;
 	}
-	protected void setMoveup(boolean moveup) {
+	public void setMoveup(boolean moveup) {
 		this.moveup = moveup;
 	}
 	protected boolean isMovedown() {
 		return movedown;
 	}
-	protected void setMovedown(boolean movedown) {
+	public void setMovedown(boolean movedown) {
 		this.movedown = movedown;
 	}
 	protected int getHeight() {
@@ -128,6 +130,58 @@ public class player {
 			return false;
 		}
 	}
+	
+	public void move() {
+		if(isMoveleft()) {
+
+			if(getX() > 10) {
+				int i = 0;
+				while(i != playerSpeed) {
+					setX(getX() - 1);
+					i += 1;
+				}
+			}
+		}
+		if(isMoveright()) {
+			if(getX() < 450) {
+				int i = 0;
+				while(i != playerSpeed) {
+					setX(getX() + 1);
+					i += 1;
+				}
+			}
+		}
+		
+		if(isMovedown()) {
+			if(getY() < 430) {
+				int i = 0;
+				while(i != playerSpeed) {
+					setY(getY() + 1);
+					i += 1;
+				}
+			}
+		}
+		
+		if(isMoveup()) {
+			if(getY() > 10) {
+				int i = 0;
+				while(i != playerSpeed) {
+					setY(getY() - 1);
+					i += 1;
+				}
+			}
+		}
+	}
+	public boolean checkCollision(Rectangle rb) {
+        Rectangle r1 = getBound();
+        Rectangle r2 = rb;
+        if (r1.intersects(r2)){
+        	return true;
+        }else {
+        	return false;
+        }
+               
+}
 	
 	
 }
